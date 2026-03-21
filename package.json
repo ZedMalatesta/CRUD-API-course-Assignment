@@ -1,0 +1,20 @@
+{
+  "name": "crud-api-course-assignment",
+  "version": "1.0.0",
+  "description": "Assignment for Node js Rolling Scopes course",
+  "homepage": "https://github.com/ZedMalatesta/CRUD-API-course-Assignment#readme",
+  "bugs": {
+    "url": "https://github.com/ZedMalatesta/CRUD-API-course-Assignment/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ZedMalatesta/CRUD-API-course-Assignment.git"
+  },
+  "license": "ISC",
+  "author": "ZedMalatesta",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  }
+}
