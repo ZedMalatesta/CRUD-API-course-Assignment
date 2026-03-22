@@ -6,6 +6,7 @@ interface IProductRepo {
   getById(id: string): Promise<Product | undefined>;
   createProduct(product: Product): Promise<Product>;
   updateProduct(id: string, credentials: Partial<IProduct>): Promise<Product>;
+  deleteProduct(id: string): Promise<boolean>;
 }
 
 export class ProductRepo implements IProductRepo {
@@ -36,5 +37,14 @@ export class ProductRepo implements IProductRepo {
     if (credentials.category !== undefined) this.storage[index].category = credentials.category;
     if (credentials.inStock !== undefined) this.storage[index].inStock = credentials.inStock;
     return this.storage[index];
+  }
+
+  async deleteProduct(id: string): Promise<boolean> {
+    const index = this.storage.findIndex((elem) => elem.id === id);
+    if (index > -1) {
+      this.storage.splice(index, 1);
+      return true;
+    }
+    return false;
   }
 }

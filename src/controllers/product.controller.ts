@@ -3,8 +3,7 @@ import { Product } from '../models/Product.js';
 import { ProductRepo } from '../repository/repository.js';
 import { StatusCodes, ResponseMessages } from '../constants/constants.js';
 import { isUUID } from '../helpers/isUUID.js';
-
-type IdParams = { productId: string };
+import { IdParams } from '../types/types.js';
 
 interface IProductController {
   dbManager: ProductRepo;
@@ -12,6 +11,7 @@ interface IProductController {
   getProductById(req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void>;
   createProduct(req: FastifyRequest, reply: FastifyReply): Promise<void>;
   updateProduct(req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void>;
+  deleteProduct(req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void>;
 }
 
 export class ProductController implements IProductController {
@@ -82,6 +82,26 @@ export class ProductController implements IProductController {
 
       const result = await this.dbManager.updateProduct(productId, req.body as Partial<Product>);
       reply.status(StatusCodes.OK).send(result);
+    } catch {
+      reply.status(StatusCodes.INTERNAL_ERROR).send({ message: ResponseMessages.INTERNAL_ERROR_MESSAGE });
+    }
+  };
+
+  deleteProduct = async (req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void> => {
+    try {
+      const { productId } = req.params;
+
+      if (!isUUID(productId)) {
+        return reply.status(StatusCodes.INVALID_DATA).send({ message: ResponseMessages.INVALID_DATA });
+      }
+
+      const result = await this.dbManager.deleteProduct(productId);
+
+      if (!result) {
+        return reply.status(StatusCodes.NOT_FOUND).send({ message: ResponseMessages.NOT_FOUND_ERROR_MESSAGE });
+      }
+
+      reply.status(StatusCodes.NO_CONTENT).send();
     } catch {
       reply.status(StatusCodes.INTERNAL_ERROR).send({ message: ResponseMessages.INTERNAL_ERROR_MESSAGE });
     }

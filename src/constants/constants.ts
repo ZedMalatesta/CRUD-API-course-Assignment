@@ -2,6 +2,7 @@ export enum ResponseMessages {
   INTERNAL_ERROR_MESSAGE = 'Internal server error',
   NOT_FOUND_ERROR_MESSAGE = 'Not found',
   INVALID_DATA = 'Invalid data',
+  DELETE_SUCCESS = 'Record was successfully deleted',
 }
 
 export enum StatusCodes {
