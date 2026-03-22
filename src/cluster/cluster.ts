@@ -3,6 +3,7 @@ import os from 'node:os';
 import http from 'node:http';
 import { Product } from '../models/Product.js';
 import { ProductRepo } from '../repository/repository.js';
+import { StatusCodes } from '../constants/constants.js';
 import { DbProcess, DbProcessRequest, DbProcessResponse } from './db.process.js';
 import { startWorkerProcess } from './worker.process.js';
 
@@ -17,16 +18,18 @@ function startLoadBalancer(appWorkers: Array<ReturnType<typeof cluster.fork>>): 
     current = (current + 1) % appWorkers.length;
     const workerPort = PORT + 1 + appWorkers.indexOf(worker);
 
+    console.log(`[Load Balancer] ${req.method} ${req.url} → Worker ${appWorkers.indexOf(worker) + 1} (port ${workerPort})`);
+
     const proxy = http.request(
       { hostname: '127.0.0.1', port: workerPort, path: req.url, method: req.method, headers: req.headers },
       (proxyRes) => {
-        res.writeHead(proxyRes.statusCode ?? 500, proxyRes.headers);
+        res.writeHead(proxyRes.statusCode ?? StatusCodes.INTERNAL_ERROR, proxyRes.headers);
         proxyRes.pipe(res);
       },
     );
 
     proxy.on('error', () => {
-      res.writeHead(502);
+      res.writeHead(StatusCodes.BAD_GATEWAY);
       res.end(JSON.stringify({ message: 'Bad Gateway' }));
     });
 
@@ -47,6 +50,7 @@ function setupWorkerMessaging(
   pendingRequests: Map<string, number>,
 ): void {
   worker.on('message', (msg: DbProcessRequest) => {
+    console.log(`[Primary] Worker ${worker.id} → DB Process: ${msg.action} (${msg.requestId})`);
     pendingRequests.set(msg.requestId, worker.id);
     dbWorker.send(msg);
   });
@@ -73,6 +77,7 @@ function startPrimaryProcess(): void {
       const workerId = pendingRequests.get(msg.requestId);
       if (workerId === undefined) return;
       pendingRequests.delete(msg.requestId);
+      console.log(`[Primary] DB Process → Worker ${workerId}: response (${msg.requestId})`);
       appWorkers.find((w) => w.id === workerId)?.send(msg);
     });
 

@@ -34,6 +34,7 @@ export class DbProcess implements IDbProcess {
 
   handleMessage = async (msg: DbProcessRequest): Promise<void> => {
     const { requestId, action, payload } = msg;
+    console.log(`[DB Process] ← Received: ${action} (${requestId})`);
     let data: unknown;
 
     switch (action) {
@@ -62,6 +63,7 @@ export class DbProcess implements IDbProcess {
         break;
     }
 
+    console.log(`[DB Process] → Responding: ${action} (${requestId})`);
     process.send!({ requestId, data } satisfies DbProcessResponse);
   };
 }

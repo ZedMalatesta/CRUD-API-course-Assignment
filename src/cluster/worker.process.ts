@@ -11,6 +11,7 @@ const pendingResolvers = new Map<string, (data: unknown) => void>();
 function sendDbRequest(action: DbProcessAction, payload?: unknown): Promise<unknown> {
   return new Promise((resolve) => {
     const requestId = randomUUID();
+    console.log(`[Worker ${process.pid}] → DB Process: ${action} (${requestId})`);
     pendingResolvers.set(requestId, resolve);
     process.send!({ requestId, action, payload } satisfies DbProcessRequest);
   });
@@ -20,6 +21,7 @@ process.on('message', (msg: DbProcessResponse) => {
   const resolve = pendingResolvers.get(msg.requestId);
   if (!resolve) return;
   pendingResolvers.delete(msg.requestId);
+  console.log(`[Worker ${process.pid}] ← DB Process: response (${msg.requestId})`);
   resolve(msg.data);
 });
 

@@ -12,4 +12,5 @@ export enum StatusCodes {
   INVALID_DATA = 400,
   NOT_FOUND = 404,
   INTERNAL_ERROR = 500,
+  BAD_GATEWAY = 502,
 }
