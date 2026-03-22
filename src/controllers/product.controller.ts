@@ -1,9 +1,9 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
-import { Product } from '../models/Product.js';
-import { ProductRepo } from '../repository/repository.js';
-import { StatusCodes, ResponseMessages } from '../constants/constants.js';
-import { isUUID } from '../helpers/isUUID.js';
-import { IdParams } from '../types/types.js';
+import { Product } from '../models/Product';
+import { ProductRepo } from '../repository/repository';
+import { StatusCodes, ResponseMessages } from '../constants/constants';
+import { isUUID } from '../helpers/isUUID';
+import { IdParams } from '../types/types';
 
 interface IProductController {
   dbManager: ProductRepo;
