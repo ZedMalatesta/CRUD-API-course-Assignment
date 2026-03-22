@@ -2,14 +2,14 @@
   "compilerOptions": {
     "target": "ES2022",
     "module": "NodeNext",
-    "moduleResolution": "Bundler",
+    "moduleResolution": "NodeNext",
     "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
     "isolatedModules": true,
     "types": [
       "node",
-      "jest"
+      "vitest/globals"
     ]
   },
   "include": [

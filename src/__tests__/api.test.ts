@@ -1,4 +1,4 @@
-import { app, repo } from '../app';
+import { app, repo } from '../app.js';
  
 beforeEach(() => {
   repo.reset();

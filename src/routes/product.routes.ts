@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify';
-import { ProductController } from '../controllers/product.controller';
-import { IdParams } from '../types/types';
+import { ProductController } from '../controllers/product.controller.js';
+import { IdParams } from '../types/types.js';
 
 export async function productRoutes(fastify: FastifyInstance, controller: ProductController) {
   fastify.get('/api/products', controller.getAllProducts);
