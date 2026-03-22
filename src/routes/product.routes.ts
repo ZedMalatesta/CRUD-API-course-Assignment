@@ -7,4 +7,6 @@ export async function productRoutes(fastify: FastifyInstance, controller: Produc
   fastify.get('/api/products', controller.getAllProducts);
   fastify.get<{ Params: IdParams }>('/api/products/:productId', controller.getProductById);
   fastify.post('/api/products', controller.createProduct);
+  fastify.put<{ Params: IdParams }>('/api/products/:productId', controller.updateProduct);
 }
+

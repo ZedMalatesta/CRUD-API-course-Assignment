@@ -1,7 +1,11 @@
-import { Product } from '../models/Product.js';
+import { Product, IProduct } from '../models/Product.js';
 
 interface IProductRepo {
   storage: Array<Product>;
+  getAll(): Promise<Array<Product>>;
+  getById(id: string): Promise<Product | undefined>;
+  createProduct(product: Product): Promise<Product>;
+  updateProduct(id: string, credentials: Partial<IProduct>): Promise<Product>;
 }
 
 export class ProductRepo implements IProductRepo {
@@ -22,5 +26,15 @@ export class ProductRepo implements IProductRepo {
   async createProduct(product: Product): Promise<Product> {
     this.storage.push(product);
     return product;
+  }
+
+  async updateProduct(id: string, credentials: Partial<IProduct>): Promise<Product> {
+    const index = this.storage.findIndex((elem) => elem.id === id);
+    if (credentials.name !== undefined) this.storage[index].name = credentials.name;
+    if (credentials.description !== undefined) this.storage[index].description = credentials.description;
+    if (credentials.price !== undefined) this.storage[index].price = credentials.price;
+    if (credentials.category !== undefined) this.storage[index].category = credentials.category;
+    if (credentials.inStock !== undefined) this.storage[index].inStock = credentials.inStock;
+    return this.storage[index];
   }
 }

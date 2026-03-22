@@ -11,6 +11,7 @@ interface IProductController {
   getAllProducts(req: FastifyRequest, reply: FastifyReply): Promise<void>;
   getProductById(req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void>;
   createProduct(req: FastifyRequest, reply: FastifyReply): Promise<void>;
+  updateProduct(req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void>;
 }
 
 export class ProductController implements IProductController {
@@ -60,6 +61,27 @@ export class ProductController implements IProductController {
       const newProduct = new Product(body);
       const result = await this.dbManager.createProduct(newProduct);
       reply.status(StatusCodes.CREATED).send(result);
+    } catch {
+      reply.status(StatusCodes.INTERNAL_ERROR).send({ message: ResponseMessages.INTERNAL_ERROR_MESSAGE });
+    }
+  };
+
+  updateProduct = async (req: FastifyRequest<{ Params: IdParams }>, reply: FastifyReply): Promise<void> => {
+    try {
+      const { productId } = req.params;
+
+      if (!isUUID(productId)) {
+        return reply.status(StatusCodes.INVALID_DATA).send({ message: ResponseMessages.INVALID_DATA });
+      }
+
+      const existing = await this.dbManager.getById(productId);
+
+      if (!existing) {
+        return reply.status(StatusCodes.NOT_FOUND).send({ message: ResponseMessages.NOT_FOUND_ERROR_MESSAGE });
+      }
+
+      const result = await this.dbManager.updateProduct(productId, req.body as Partial<Product>);
+      reply.status(StatusCodes.OK).send(result);
     } catch {
       reply.status(StatusCodes.INTERNAL_ERROR).send({ message: ResponseMessages.INTERNAL_ERROR_MESSAGE });
     }
