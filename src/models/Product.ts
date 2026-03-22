@@ -27,4 +27,17 @@ export class Product implements IProduct {
     this.category = category;
     this.inStock = inStock;
   }
+
+  static validate(data: unknown): data is CreateProductDto {
+    if (typeof data !== 'object' || data === null) return false;
+    const d = data as Record<string, unknown>;
+
+    return (
+      typeof d['name'] === 'string' && d['name'].length > 0 &&
+      typeof d['description'] === 'string' && d['description'].length > 0 &&
+      typeof d['price'] === 'number' && d['price'] > 0 &&
+      typeof d['category'] === 'string' && d['category'].length > 0 &&
+      typeof d['inStock'] === 'boolean'
+    );
+  }
 }
